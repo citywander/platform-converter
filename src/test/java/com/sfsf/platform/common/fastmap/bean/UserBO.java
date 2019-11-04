@@ -8,6 +8,9 @@ public class UserBO {
     
     private OrgBO org;
     
+    private TeamBO team;
+    
+    
     private String createDate;
     
     public OrgBO getOrg() {
@@ -41,6 +44,14 @@ public class UserBO {
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
+
+	public TeamBO getTeam() {
+		return team;
+	}
+
+	public void setTeam(TeamBO team) {
+		this.team = team;
+	}
     
     
 }

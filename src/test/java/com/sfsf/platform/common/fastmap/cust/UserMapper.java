@@ -13,6 +13,7 @@ public interface UserMapper {
     UserBO toBO(UserDTO userDTO);
     
     @Mapping(target="org.branchName", source="org.branch.name")
+    @Mapping(target="teamName", source="team.name")
     UserDTO toDTO(UserBO userBO);
 
 }

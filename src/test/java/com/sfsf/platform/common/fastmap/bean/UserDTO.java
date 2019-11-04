@@ -8,11 +8,12 @@ public class UserDTO {
     
     private String userName;
     
+    private String teamName;
+    
     private OrgDTO org;
     
     private Date createDate;
     
-
     public String getId() {
         return id;
     }
@@ -44,6 +45,14 @@ public class UserDTO {
     public String getUserName() {
         return userName;
     }
-    
+
+	public String getTeamName() {
+		return teamName;
+	}
+
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
+	}
+
     
 }
