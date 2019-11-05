@@ -120,44 +120,53 @@ public class MapperClassGenerator {
     private void appendDefaultWriteMethod(StringBuilder sb, Map<String, String> mappingDict, Class<?> srcType, Class<?> targetType) 
     		throws IntrospectionException {
         for (PropertyDescriptor pd : Introspector.getBeanInfo(targetType).getPropertyDescriptors()) {
-            String readMethod = pd.getName();
-            if (mappingDict.containsKey(pd.getName())) {
-            	readMethod = mappingDict.get(pd.getName());
+            if (pd.getWriteMethod() == null || "class".equals(pd.getName())) {                
+                continue;
             }
-            if (pd.getWriteMethod() != null && !"class".equals(pd.getName())) {
-                Method srcReadMethod = null;
-                try {
-                    srcReadMethod = new PropertyDescriptor(readMethod, srcType).getReadMethod();
-                } catch (IntrospectionException e) {
-                    continue;
-                }
-                if (readMethod.indexOf(".") >= 0) {
-                	this.appendReadeWriteLine(sb, srcType, pd.getWriteMethod().getName(), readMethod);                	
-                } else {
-                	this.appendNewLine(sb, "r."+ pd.getWriteMethod().getName(), "(p0."+srcReadMethod.getName(), "())");
-                }
-                mappingDict.remove(pd.getName());
+            String propName = pd.getName();
+            String writeMethod = pd.getWriteMethod().getName();
+            if (mappingDict.containsKey(propName)) {
+                this.appendReadeWriteLine(sb, srcType, pd.getWriteMethod(), mappingDict.get(propName));
+            } else {
+                this.appendReadeWriteLine(sb, srcType, pd.getWriteMethod(), propName);
             }
+            System.out.println(targetType + ":"  + writeMethod);
         }
     }
     
-    private void appendMapperWriteMethod(StringBuilder sb, Class<?> srcType, String writeMethod, String readMethod) {
+    
+    private void appendMapperWriteMethod(StringBuilder sb, Class<?> srcType, Method writeMethod, String readMethod) 
+        throws IntrospectionException{
     	
     }
     
-    private void appendReadeWriteLine(StringBuilder sb, Class<?> srcType, String writeMethod, String readMethod) {
-        Method srcReadMethod = null;
-        try {
-            srcReadMethod = new PropertyDescriptor(readMethod, srcType).getReadMethod();
-        } catch (IntrospectionException e) {
-        	return;
+    private void appendReadeWriteLine(StringBuilder sb, Class<?> srcType, Method writeMethod, String readMethod) {
+        String[] readProps = readMethod.split("[.]");
+        StringBuilder readString = new StringBuilder();
+        boolean appendComma = false;
+        Method lastReadMethod = null;
+        for(String prop: readProps) {
+            PropertyDescriptor srcReadMethod = null;
+            try {
+                srcReadMethod = new PropertyDescriptor(prop, srcType);
+            } catch (IntrospectionException e) {
+                return;
+            }
+            lastReadMethod = srcReadMethod.getReadMethod();
+            if(!appendComma){
+                appendComma = true;                
+            } else {
+                readString.append(".");
+            }
+            readString.append(lastReadMethod.getName()).append("()");
         }
-        if (readMethod.indexOf(".") >= 0) {
-        	
-        } else {
-        	this.appendNewLine(sb, "r."+ writeMethod, "(p0."+srcReadMethod.getName(), "())");
+        if (writeMethod.getParameterTypes()[0] != lastReadMethod.getReturnType()) {
+            return;
         }
+        this.appendNewLine(sb, "r."+ writeMethod.getName(), "(p0."+ readString+")");
     }
+    
+    
     
     private void appendNewLine(StringBuilder sb, String ...args) {
         for (String arg: args) {

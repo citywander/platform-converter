@@ -12,7 +12,7 @@ public class UserDTO {
     
     private OrgDTO org;
     
-    private Date createDate;
+    //private Date createDate;
     
     public String getId() {
         return id;
@@ -34,13 +34,13 @@ public class UserDTO {
         this.org = org;
     }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+//    public Date getCreateDate() {
+//        return createDate;
+//    }
+//
+//    public void setCreateDate(Date createDate) {
+//        this.createDate = createDate;
+//    }
 
     public String getUserName() {
         return userName;
